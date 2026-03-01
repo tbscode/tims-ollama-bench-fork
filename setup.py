@@ -31,7 +31,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'llm_benchmark = tims_llm_benchmark.main:app',
+            'tims_llm_benchmark = tims_llm_benchmark.main:app',
         ],
     },
     # This line enables editable installs

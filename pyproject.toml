@@ -29,7 +29,7 @@ setuptools = "^78.1.1"
 pytest = "^8.1.1"
 
 [tool.poetry.scripts]
-llm_benchmark = "tims_llm_benchmark.main:app"
+tims_llm_benchmark = "tims_llm_benchmark.main:app"
 
 [build-system]
 requires = ["poetry-core"]
