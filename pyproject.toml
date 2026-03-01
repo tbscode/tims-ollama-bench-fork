@@ -6,6 +6,7 @@ authors = ["Tim <tim+llm-benchmark-fork@timschupp.de>", "Jason Chuang"]
 license = "MIT"
 homepage = "https://github.com/tbscode/tims-ollama-bench-fork"
 readme = "README.md"
+packages = [{include = "llm_benchmark"}]
 keywords = [
     "benchmark",
     "llama",
