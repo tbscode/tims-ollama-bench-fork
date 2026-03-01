@@ -5,10 +5,10 @@ from llm_benchmark import run_benchmark
 
 from .systeminfo import sysmain
 
-from .security_connection import connection 
-
 import pkg_resources
 
+
+from typing import Optional
 
 app = typer.Typer()
 
@@ -18,7 +18,7 @@ def hello(name: str):
     
 
 @app.command()
-def run(ollamabin: str = 'ollama' , sendinfo : bool = True , custombenchmark : str = None):
+def run(ollamabin: str = 'ollama' , custombenchmark : Optional[str] = None):
     sys_info = sysmain.get_extra()
     print(f"Total memory size : {sys_info['memory']:.2f} GB") 
     print(f"cpu_info: {sys_info['cpu']}")
@@ -33,9 +33,7 @@ def run(ollamabin: str = 'ollama' , sendinfo : bool = True , custombenchmark : s
 
     if custombenchmark:
         models_file_path = custombenchmark
-        sendinfo = False
         print(f"running custom benchmark from models_file_path: {models_file_path}")
-        print(f"Disabling sendinfo for custom benchmark")
     else:
         models_file_path = pkg_resources.resource_filename('llm_benchmark','data/benchmark_models_32gb_ram.yml')
         if(ft_mem_size>=1 and ft_mem_size <2):
@@ -72,19 +70,6 @@ def run(ollamabin: str = 'ollama' , sendinfo : bool = True , custombenchmark : s
         bench_results_info.update({"llama2:7b":7.65})
         bench_results_info.update({"gemma2:7b":17.77})
 
-    if (sendinfo==True):
-        print(f"Sending the following data to a remote server")
-        print(f"Your machine UUID : {sysmain.get_uuid()}")
-        #print(f"{bench_results_info.items()}")
-        x = connection.send_benchmark(sysmain.get_uuid(),ollama_version,bench_results_info)
-        #print(x)
-        print('=='*10)
-        #print(f"{sys_info.items()}")
-        sys_info = sysmain.get_extra()
-        sys_info['uuid']=f"{sysmain.get_uuid()}"
-        x = connection.send_sysinfo(sys_info)
-        #print(x)
-
 
 @app.command()
 def goodbye(name: str, formal: bool = False):
@@ -97,16 +82,10 @@ def goodbye(name: str, formal: bool = False):
 def sysinfo(formal: bool = True):
     if formal:
         sys_info = sysmain.get_extra()
-        sys_info['uuid'] = f"{sysmain.get_uuid()}"
-        #print(sys_info.items())
         print(f"memory : {sys_info['memory']:.2f} GB") 
         print(f"cpu_info: {sys_info['cpu']}")
         print(f"gpu_info: {sys_info['gpu']}")
         print(f"os_version: {sys_info['os_version']}")
-        print(f"Your machine UUID : {sys_info['uuid']}")
-
-        x = connection.send_sysinfo(sys_info)
-        print(x)
     else:
         print(f"No print!")
 

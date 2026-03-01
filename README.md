@@ -10,16 +10,10 @@ Working [Ollama](https://ollama.com) installation.
 
 ## Installation Steps
 
-Depending on your python setup either
+You can install this package directly from the github repository using pip:
 
 ```bash
-pip install llm-benchmark
-```
-
-or
-
-```bash
-pipx install llm-benchmark
+pip install git+https://github.com/tbscode/tims-ollama-bench-fork.git
 ```
 
 ## Usage for general users directly
@@ -27,10 +21,6 @@ pipx install llm-benchmark
 ```bash
 llm_benchmark run
 ```
-
-## Installation and Usage in Video format
-
-![llm-benchmark](https://github.com/aidatatools/ollama-benchmark/blob/main/llm-benchmark.gif)
 
 It's tested on Python 3.9 and above.
 
@@ -105,25 +95,13 @@ poetry install
 llm_benchmark hello jason
 ```
 
-### Example #1 send systeminfo and benchmark results to a remote server
-
-```bash
-llm_benchmark run
-```
-
-### Example #2 Do not send systeminfo and benchmark results to a remote server
-
-```bash
-llm_benchmark run --no-sendinfo
-```
-
-### Example #3 Benchmark run on explicitly given the path to the ollama executable (When you built your own developer version of ollama)
+### Example #1 Benchmark run on explicitly given the path to the ollama executable (When you built your own developer version of ollama)
 
 ```bash
 llm_benchmark run --ollamabin=~/code/ollama/ollama
 ```
 
-### Example #4 run custom benchmark models
+### Example #2 run custom benchmark models
 
 1. Create a custom benchmark file like following yaml format, replace with your own benchmark models, remember to use double quote for your model name
 

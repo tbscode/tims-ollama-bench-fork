@@ -3,8 +3,6 @@ import psutil
 import GPUtil
 import subprocess
 import os
-import uuid
-import base64
 
 def get_total_memory_size():
     memory_info = psutil.virtual_memory()
@@ -261,22 +259,3 @@ def get_extra():
         print("error! when retrieving os_version, cpu, or gpu !")
     
     return ans
-
-def get_uuid():
-    sys_info = get_extra()
-    system_name = sys_info['system_name']
-    cpu = sys_info['cpu']
-    gpu  = sys_info['gpu']
-    memory = f"{sys_info['memory']:.2f}"
-
-    id_str = f"{system_name}|{cpu}|{gpu}|{memory}"
-    #print(id_str)
-    uuid5 = uuid.uuid5(uuid.NAMESPACE_X500, id_str)
-    return uuid5    
-
-if __name__ == "__main__":
-    #sysinfo = get_extra()
-    uuid5 = get_uuid()
-    print("UUID version 5:", uuid5)
-    
-
