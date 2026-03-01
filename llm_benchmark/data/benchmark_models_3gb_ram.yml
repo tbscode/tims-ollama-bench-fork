@@ -1,0 +1,8 @@
+# Author: Jason Chuang
+# License: MIT
+# Created: 2025-02-02
+version: 2.0
+models:
+  - model: deepseek-r1:1.5b
+  - model: gemma:2b
+  - model: phi:2.7b

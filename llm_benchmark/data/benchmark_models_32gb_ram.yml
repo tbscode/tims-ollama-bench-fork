@@ -1,0 +1,8 @@
+# Author: Jason Chuang
+# License: MIT
+# Created: 2025-02-02
+version: 2.0
+models:
+  - model: phi4:14b
+  - model: deepseek-r1:14b
+  - model: gpt-oss:20b
