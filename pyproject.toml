@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "llm_benchmark"
+name = "tims-ollama-bench-fork"
 version = "0.4.9"
-description = "LLM Benchmark for Throughputs via Ollama"
-authors = ["Jason Chuang <chuangtcee@gmail.com>"]
+description = "LLM Benchmark for Throughputs via Ollama (Fork with no telemetry)"
+authors = ["Tim"]
 license = "MIT"
-homepage = "https://github.com/aidatatools/ollama-benchmark/"
+homepage = "https://github.com/tbscode/tims-ollama-bench-fork"
 readme = "README.md"
 keywords = [
     "benchmark",

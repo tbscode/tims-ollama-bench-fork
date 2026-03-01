@@ -4,14 +4,14 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
-    name='llm_benchmark',
+    name='tims-ollama-bench-fork',
     version='0.4.9',
-    author='Jason Chuang',
-    author_email='chuangtcee@gmail.com',
-    description='LLM Benchmark',
+    author='Tim',
+    author_email='none@example.com',
+    description='LLM Benchmark (Fork with no telemetry)',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/aidatatools/ollama-benchmark',
+    url='https://github.com/tbscode/tims-ollama-bench-fork',
     packages=find_packages(),
     package_data={'llm_benchmark': ['data/*.yml', 'data/img/*.jpg']},
     classifiers=[
