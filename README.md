@@ -1,6 +1,8 @@
 # llm-benchmark (Local Fork)
 
-*A privacy-focused fork of [aidatatools/ollama-benchmark](https://github.com/aidatatools/ollama-benchmark) with telemetry removed.*
+> *tracking disabled fork of [aidatatools/ollama-benchmark](https://github.com/aidatatools/ollama-benchmark) with telemetry removed.*
+
+Used by @tbscode for benchmarks published [in this blog post](TODO)
 
 Measure your local LLMs' tokens-per-second performance via [Ollama](https://ollama.com).
 
