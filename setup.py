@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/tbscode/tims-ollama-bench-fork',
     packages=find_packages(),
-    package_data={'llm_benchmark': ['data/*.yml', 'data/img/*.jpg']},
+    package_data={'tims_llm_benchmark': ['data/*.yml', 'data/img/*.jpg']},
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
@@ -33,7 +33,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'llm_benchmark = llm_benchmark.main:app',
+            'llm_benchmark = tims_llm_benchmark.main:app',
         ],
     },
     # This line enables editable installs

@@ -6,7 +6,7 @@ authors = ["Tim <tim+llm-benchmark-fork@timschupp.de>", "Jason Chuang"]
 license = "MIT"
 homepage = "https://github.com/tbscode/tims-ollama-bench-fork"
 readme = "README.md"
-packages = [{include = "llm_benchmark"}]
+packages = [{include = "tims_llm_benchmark"}]
 keywords = [
     "benchmark",
     "llama",
@@ -30,7 +30,7 @@ setuptools = "^78.1.1"
 pytest = "^8.1.1"
 
 [tool.poetry.scripts]
-llm_benchmark = "llm_benchmark.main:app"
+llm_benchmark = "tims_llm_benchmark.main:app"
 
 [build-system]
 requires = ["poetry-core"]

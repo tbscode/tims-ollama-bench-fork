@@ -78,7 +78,7 @@ def run_benchmark(models_file_path, benchmark_file_path, type, ollamabin: str = 
                             for one_prompt in one_model_type['prompts']:
                                 img_file_names = one_prompt['keywords'].split(',')
                                 for img in img_file_names:
-                                    img_file_path = pkg_resources.resource_filename('llm_benchmark',f'data/img/{img}')
+                                    img_file_path = pkg_resources.resource_filename('tims_llm_benchmark',f'data/img/{img}')
                                     prompt = f"{one_prompt['prompt']} {img_file_path}"
                                     print(f"prompt = {prompt}")
                                     result = subprocess.run([ollamabin, 'run', model_name, one_prompt['prompt'],'--verbose'], capture_output=True, text=True, check=True, encoding='utf-8')
