@@ -21,8 +21,6 @@ setup(
     ],
     python_requires='>=3.9',
     install_requires=[
-        'click>=8.0.0',
-        'typer==0.11.0',
         'ollama==0.5.1',
         'pyyaml==6.0.1',
         'requests==2.32.4',

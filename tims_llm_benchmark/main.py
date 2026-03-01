@@ -1,4 +1,6 @@
-import typer, base64
+import base64
+import argparse
+import sys
 from tims_llm_benchmark import check_models
 from tims_llm_benchmark import check_ollama
 from tims_llm_benchmark import run_benchmark
@@ -7,18 +9,12 @@ from .systeminfo import sysmain
 
 import pkg_resources
 
-
 from typing import Optional
 
-app = typer.Typer()
-
-@app.command()
 def hello(name: str):
     print(f"Hello {name}!")
-    
 
-@app.command()
-def run(ollamabin: str = 'ollama' , custombenchmark : Optional[str] = None):
+def run(ollamabin: str = 'ollama', custombenchmark: Optional[str] = None):
     sys_info = sysmain.get_extra()
     print(f"Total memory size : {sys_info['memory']:.2f} GB") 
     print(f"cpu_info: {sys_info['cpu']}")
@@ -70,15 +66,12 @@ def run(ollamabin: str = 'ollama' , custombenchmark : Optional[str] = None):
         bench_results_info.update({"llama2:7b":7.65})
         bench_results_info.update({"gemma2:7b":17.77})
 
-
-@app.command()
 def goodbye(name: str, formal: bool = False):
     if formal:
         print(f"Goodbye Mr.(Ms.) {name}. Have a good day.")
     else:
         print(f"Bye {name}!")
 
-@app.command()
 def sysinfo(formal: bool = True):
     if formal:
         sys_info = sysmain.get_extra()
@@ -89,6 +82,42 @@ def sysinfo(formal: bool = True):
     else:
         print(f"No print!")
 
+def app():
+    parser = argparse.ArgumentParser(description="LLM Benchmark CLI")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # run command
+    run_parser = subparsers.add_parser("run", help="Run the benchmark")
+    run_parser.add_argument("--ollamabin", type=str, default="ollama", help="Path to ollama binary")
+    run_parser.add_argument("--custombenchmark", type=str, default=None, help="Path to custom benchmark models yaml")
+
+    # sysinfo command
+    sysinfo_parser = subparsers.add_parser("sysinfo", help="Print system information")
+    sysinfo_parser.add_argument("--formal", action=argparse.BooleanOptionalAction, default=True, help="Formal print output")
+
+    # hello command
+    hello_parser = subparsers.add_parser("hello", help="Say hello")
+    hello_parser.add_argument("name", type=str, help="Name to greet")
+
+    # goodbye command
+    goodbye_parser = subparsers.add_parser("goodbye", help="Say goodbye")
+    goodbye_parser.add_argument("name", type=str, help="Name to say goodbye to")
+    goodbye_parser.add_argument("--formal", action="store_true", help="Formal goodbye")
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
+    args = parser.parse_args()
+
+    if args.command == "run":
+        run(args.ollamabin, args.custombenchmark)
+    elif args.command == "sysinfo":
+        sysinfo(args.formal)
+    elif args.command == "hello":
+        hello(args.name)
+    elif args.command == "goodbye":
+        goodbye(args.name, args.formal)
 
 if __name__ == "__main__":
     app()
