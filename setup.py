@@ -6,8 +6,8 @@ with open('README.md', 'r') as fh:
 setup(
     name='tims-ollama-bench-fork',
     version='0.4.9',
-    author='Tim',
-    author_email='none@example.com',
+    author='Tim, Jason Chuang',
+    author_email='none@example.com, chuangtcee@gmail.com',
     description='LLM Benchmark (Fork with no telemetry)',
     long_description=long_description,
     long_description_content_type='text/markdown',
