@@ -1,14 +1,14 @@
-# llm-benchmark (ollama-benchmark)
+# llm-benchmark (Local Fork)
 
-LLM Benchmark for Throughput via Ollama (Local LLMs)
+*This is a privacy-focused fork of [aidatatools/ollama-benchmark](https://github.com/aidatatools/ollama-benchmark) with all upstream telemetry and result reporting removed.*
 
-Measure how fast your local LLMs *really* are—with a simple, cross-platform CLI tool that tells you the tokens-per-second truth.
+Measure how fast your local LLMs *really* are with a simple, cross-platform CLI tool that tells you the tokens-per-second truth via Ollama.
 
-## Installation prerequisites
+### Prerequisites
 
-Working [Ollama](https://ollama.com) installation.
+- A working [Ollama](https://ollama.com) installation.
 
-## Installation Steps
+### Installation
 
 You can install this package directly from the github repository using pip:
 
@@ -16,96 +16,28 @@ You can install this package directly from the github repository using pip:
 pip install git+https://github.com/tbscode/tims-ollama-bench-fork.git
 ```
 
-## Usage for general users directly
+### Usage
+
+Run the standard benchmark:
 
 ```bash
 llm_benchmark run
 ```
 
-It's tested on Python 3.9 and above.
+*Note: The benchmark will automatically detect your system's RAM and pull appropriate models via Ollama before running.*
 
-## ollama installation with the following models installed
+### Advanced Usage
 
-7B model can be run on machines with 8GB of RAM
-
-13B model can be run on machines with 16GB of RAM
-
-## Usage explaination
-
-On Windows, Linux, and macOS, it will detect memory RAM size to first download required LLM models.
-
-When memory RAM size is greater than or equal to 4GB, but less than 7GB, it will check if gemma:2b exist. The program implicitly pull the model.
-
-```bash
-ollama pull deepseek-r1:1.5b
-ollama pull gemma:2b
-ollama pull phi:2.7b
-ollama pull phi3:3.8b
-```
-
-When memory RAM size is greater than 7GB, but less than 15GB, it will check if these models exist. The program implicitly pull these models
-
-```bash
-ollama pull phi3:3.8b
-ollama pull gemma2:9b
-ollama pull mistral:7b
-ollama pull llama3.1:8b
-ollama pull deepseek-r1:8b
-ollama pull llava:7b
-```
-
-When memory RAM size is greater than 15GB, but less than 31GB, it will check if these models exist. The program implicitly pull these models
-
-```bash
-ollama pull gemma2:9b
-ollama pull mistral:7b
-ollama pull phi4:14b
-ollama pull deepseek-r1:8b
-ollama pull deepseek-r1:14b
-ollama pull llava:7b
-ollama pull llava:13b
-```
-
-When memory RAM size is greater than 31GB, it will check if these models exist. The program implicitly pull these models
-
-```bash
-ollama pull phi4:14b
-ollama pull deepseek-r1:14b
-ollama pull gpt-oss:20b
-```
-
-## Python Poetry manually(advanced) installation
-
-<https://python-poetry.org/docs/#installing-manually>
-
-## For developers to develop new features on Windows Powershell or on Ubuntu Linux or macOS
-
-```bash
-python3 -m venv .venv
-. ./.venv/bin/activate
-pip install -U pip setuptools
-pip install poetry
-```
-
-## Usage in Python virtual environment
-
-```bash
-poetry shell
-poetry install
-llm_benchmark hello jason
-```
-
-### Example #1 Benchmark run on explicitly given the path to the ollama executable (When you built your own developer version of ollama)
-
+#### Custom Ollama Path
+If you built your own developer version of Ollama:
 ```bash
 llm_benchmark run --ollamabin=~/code/ollama/ollama
 ```
 
-### Example #2 run custom benchmark models
-
-1. Create a custom benchmark file like following yaml format, replace with your own benchmark models, remember to use double quote for your model name
-
+#### Custom Benchmark Models
+You can provide a custom YAML file to benchmark specific models:
 ```yaml
+# custombenchmarkmodels.yml
 file_name: "custombenchmarkmodels.yml"
 version: 2.0.custom
 models:
@@ -113,12 +45,7 @@ models:
   - model: "qwen:0.5b"
 ```
 
-2. run with the flag and point to the path of custombenchmarkmodels.yml
-
+Run with the custom flag:
 ```bash
 llm_benchmark run --custombenchmark=path/to/custombenchmarkmodels.yml
 ```
-
-## Reference
-
-[Ollama](https://ollama.com)
