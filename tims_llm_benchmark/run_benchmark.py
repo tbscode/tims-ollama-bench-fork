@@ -284,6 +284,9 @@ def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlength
     if not isinstance(request_defaults, dict):
         raise ValueError('request_defaults must be a map')
 
+    connect_timeout = float(models_dict.get('request_connect_timeout_seconds', 20))
+    read_timeout = float(models_dict.get('request_read_timeout_seconds', 600))
+
     host_header = str(models_dict.get('host_header', '')).strip()
     headers = {
         'Content-Type': 'application/json',
@@ -339,7 +342,8 @@ def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlength
                         payload['stream_options'] = {'include_usage': True}
 
                     req_start = time.perf_counter()
-                    with requests.post(endpoint, headers=headers, json=payload, stream=bool(payload.get('stream')), timeout=(20, 1200)) as response:
+                    print(f'timeout: connect={connect_timeout:g}s read={read_timeout:g}s')
+                    with requests.post(endpoint, headers=headers, json=payload, stream=bool(payload.get('stream')), timeout=(connect_timeout, read_timeout)) as response:
                         response.raise_for_status()
 
                         if payload.get('stream'):
