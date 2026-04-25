@@ -14,19 +14,12 @@ from typing import Optional
 def hello(name: str):
     print(f"Hello {name}!")
 
-def run(ollamabin: str = 'ollama', custombenchmark: Optional[str] = None, apibenchmark: bool = False):
-    sys_info = sysmain.get_extra()
-    print(f"Total memory size : {sys_info['memory']:.2f} GB") 
-    print(f"cpu_info: {sys_info['cpu']}")
-    print(f"gpu_info: {sys_info['gpu']}")
-    print(f"os_version: {sys_info['os_version']}")
-
-    ft_mem_size = float(f"{sys_info['memory']:.2f}")
-
+def run(ollamabin: str = 'ollama', custombenchmark: Optional[str] = None, apibenchmark: bool = False, contextlengthbenchmark: bool = False, contextlengthsteps: int = 10):
     if custombenchmark:
         models_file_path = custombenchmark
         print(f"running custom benchmark from models_file_path: {models_file_path}")
     else:
+        ft_mem_size = float(f"{sysmain.get_total_memory_size():.2f}")
         models_file_path = pkg_resources.resource_filename('tims_llm_benchmark','data/benchmark_models_32gb_ram.yml')
         if(ft_mem_size>=1 and ft_mem_size <2):
             models_file_path = pkg_resources.resource_filename('tims_llm_benchmark','data/benchmark_models_2gb_ram.yml')
@@ -41,6 +34,13 @@ def run(ollamabin: str = 'ollama', custombenchmark: Optional[str] = None, apiben
 
     provider = check_models.get_provider(models_file_path)
     api_mode = apibenchmark or provider in ('openai-compatible', 'litellm')
+
+    if not api_mode:
+        sys_info = sysmain.get_extra()
+        print(f"Total memory size : {sys_info['memory']:.2f} GB")
+        print(f"cpu_info: {sys_info['cpu']}")
+        print(f"gpu_info: {sys_info['gpu']}")
+        print(f"os_version: {sys_info['os_version']}")
 
     if api_mode:
         print("ollama_version: skipped (api benchmark mode)")
@@ -63,16 +63,16 @@ def run(ollamabin: str = 'ollama', custombenchmark: Optional[str] = None, apiben
     bench_results_info = {}
     is_simulation = False
     if custombenchmark:
-        result0 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'custom-model', ollamabin, api_mode)
+        result0 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'custom-model', ollamabin, api_mode, contextlengthbenchmark, contextlengthsteps)
         bench_results_info.update(result0)
     elif is_simulation==False :
-        result1 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'instruct', ollamabin, api_mode)
+        result1 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'instruct', ollamabin, api_mode, contextlengthbenchmark, contextlengthsteps)
         bench_results_info.update(result1)
-        result2 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'question-answer', ollamabin, api_mode)
+        result2 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'question-answer', ollamabin, api_mode, contextlengthbenchmark, contextlengthsteps)
         bench_results_info.update(result2)
-        result3 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'vision-image', ollamabin, api_mode)
+        result3 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'vision-image', ollamabin, api_mode, contextlengthbenchmark, contextlengthsteps)
         bench_results_info.update(result3)
-        result4 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'instruction-question-answer-code-generation', ollamabin, api_mode)
+        result4 = run_benchmark.run_benchmark(models_file_path,benchmark_file_path, 'instruction-question-answer-code-generation', ollamabin, api_mode, contextlengthbenchmark, contextlengthsteps)
         bench_results_info.update(result4)
     else:
         bench_results_info.update({"llama2:7b":7.65})
@@ -103,6 +103,8 @@ def app():
     run_parser.add_argument("--ollamabin", type=str, default="ollama", help="Path to ollama binary")
     run_parser.add_argument("--custombenchmark", type=str, default=None, help="Path to custom benchmark models yaml")
     run_parser.add_argument("--apibenchmark", action="store_true", help="Use OpenAI-compatible API mode")
+    run_parser.add_argument("--contextlengthbenchmark", action="store_true", help="Run context length scaling benchmark")
+    run_parser.add_argument("--contextlengthsteps", type=int, default=10, help="Number of context length test points")
 
     # sysinfo command
     sysinfo_parser = subparsers.add_parser("sysinfo", help="Print system information")
@@ -124,7 +126,7 @@ def app():
     args = parser.parse_args()
 
     if args.command == "run":
-        run(args.ollamabin, args.custombenchmark, args.apibenchmark)
+        run(args.ollamabin, args.custombenchmark, args.apibenchmark, args.contextlengthbenchmark, args.contextlengthsteps)
     elif args.command == "sysinfo":
         sysinfo(args.formal)
     elif args.command == "hello":
