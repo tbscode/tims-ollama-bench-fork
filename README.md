@@ -43,6 +43,12 @@ Enable API mode with `--apibenchmark`:
 tims_llm_benchmark run --custombenchmark=models.yml --apibenchmark
 ```
 
+Run context-length scaling benchmark (10 points):
+
+```bash
+tims_llm_benchmark run --custombenchmark=models.yml --apibenchmark --contextlengthbenchmark --contextlengthsteps=10
+```
+
 Example `models.yml`:
 
 ```yaml
@@ -60,4 +66,23 @@ models:
   - model: "gemma4-31b"
 unload_command: "./scripts/unload-model.sh {model}"
 unload_pause_seconds: 10
+```
+
+In API mode, each prompt reports:
+
+- `eval rate` (decode tokens/s)
+- `ttft` (time to first token in ms)
+
+and each model reports `Average TTFT`.
+
+Context-length mode generates increasing prompt sizes and reports per-point metrics:
+
+- target context length (tokens, approximate)
+- prompt tokens (when returned by provider)
+- eval rate and TTFT
+
+At the repo level, you can chart TTFT vs context length from logs using:
+
+```bash
+./scripts/plot-context-ttft.py --log llm-benchmark-results/benchmark-<config>.log
 ```
