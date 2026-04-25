@@ -28,8 +28,38 @@ def parse_yaml(yaml_file_path):
             print(e)
     return data
 
+
+def get_provider(models_file_path):
+    models_dict = parse_yaml(models_file_path)
+    provider = str(models_dict.get('provider', 'ollama')).strip().lower()
+    if provider == 'litellm':
+        return 'openai-compatible'
+    return provider
+
+
+def get_model_names(models_file_path):
+    models_dict = parse_yaml(models_file_path)
+    names = []
+    for entry in models_dict.get('models', []):
+        if isinstance(entry, dict):
+            model_name = str(entry.get('model', '')).strip()
+        else:
+            model_name = str(entry).strip()
+        if model_name:
+            names.append(model_name)
+    return names
+
 def pull_models(models_file_path):
     print(f"LLM models file path：{models_file_path}")
+    provider = get_provider(models_file_path)
+    print(f"provider: {provider}")
+
+    if provider in ('openai-compatible', 'litellm'):
+        print('Skipping model pull for OpenAI-compatible provider')
+        for model_name in get_model_names(models_file_path):
+            print(model_name)
+        return
+
     print(f"Checking and pulling the following LLM models")
     models_dict = parse_yaml(models_file_path)
     for x in models_dict['models']:

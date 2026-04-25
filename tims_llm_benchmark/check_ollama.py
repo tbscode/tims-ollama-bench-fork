@@ -10,6 +10,8 @@ def run_command(command):
 
 def check_ollama_version(ollamabin='ollama'):
     res = run_command([ollamabin, '--version'])
+    if res is None:
+        return 'n/a'
     ans = res.split('\n')
     #print(ans[-1])
     if("warning" in ans[-1].lower()):
