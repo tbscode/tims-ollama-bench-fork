@@ -46,9 +46,14 @@ parser.add_argument("--contextlengthbenchmark",
                     help="run context length scaling benchmark")
 
 parser.add_argument("--contextlengthsteps",
+                     type=int,
+                     default=10,
+                     help="number of context length test points")
+
+parser.add_argument("--apiprimecount",
                     type=int,
-                    default=10,
-                    help="number of context length test points")
+                    default=0,
+                    help="number of warm-up requests per model before measured prompts")
 
 
 def parse_yaml(yaml_file_path):
@@ -270,7 +275,28 @@ def _stream_openai_response(response):
     return completion_tokens, prompt_tokens, ''.join(generated_text), first_token_ts
 
 
-def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlengthbenchmark=False, contextlengthsteps=10):
+def _prime_openai_model(endpoint, headers, model_name, request_defaults, connect_timeout, read_timeout, prime_requests):
+    if prime_requests <= 0:
+        return
+
+    print(f'priming requests: {prime_requests}')
+    for index in range(prime_requests):
+        payload = {
+            'model': model_name,
+            'messages': [{'role': 'user', 'content': 'Reply with one word: ready'}],
+            'stream': False,
+        }
+        payload.update(request_defaults)
+        payload['stream'] = False
+        if 'max_tokens' not in payload:
+            payload['max_tokens'] = 1
+
+        print(f'priming request {index + 1}/{prime_requests}')
+        with requests.post(endpoint, headers=headers, json=payload, stream=False, timeout=(connect_timeout, read_timeout)) as response:
+            response.raise_for_status()
+
+
+def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlengthbenchmark=False, contextlengthsteps=10, apiprimecount=0):
     endpoint = str(models_dict.get('endpoint', '')).strip()
     if not endpoint:
         raise ValueError('OpenAI-compatible benchmark requires endpoint in models yaml')
@@ -323,6 +349,7 @@ def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlength
             file1.write(f'\nmodel_name =    {model_name}\n')
 
             try:
+                _prime_openai_model(endpoint, headers, model_name, request_defaults, connect_timeout, read_timeout, apiprimecount)
                 for idx, prompt in enumerate(prompts):
                     target_context = prompt_entries[idx].get('target_tokens')
                     if target_context is not None:
@@ -421,7 +448,7 @@ def _run_openai_benchmark(models_dict, benchmark_dict, model_type, contextlength
     return ans
 
 
-def run_benchmark(models_file_path, benchmark_file_path, type, ollamabin: str = 'ollama', apibenchmark: bool = False, contextlengthbenchmark: bool = False, contextlengthsteps: int = 10):
+def run_benchmark(models_file_path, benchmark_file_path, type, ollamabin: str = 'ollama', apibenchmark: bool = False, contextlengthbenchmark: bool = False, contextlengthsteps: int = 10, apiprimecount: int = 0):
     models_dict = parse_yaml(models_file_path)
     benchmark_dict = parse_yaml(benchmark_file_path)
     provider = str(models_dict.get('provider', 'ollama')).strip().lower()
@@ -429,8 +456,11 @@ def run_benchmark(models_file_path, benchmark_file_path, type, ollamabin: str = 
     if contextlengthsteps < 1:
         raise ValueError('contextlengthsteps must be >= 1')
 
+    if apiprimecount < 0:
+        raise ValueError('apiprimecount must be >= 0')
+
     if apibenchmark or provider in ('openai-compatible', 'litellm'):
-        return _run_openai_benchmark(models_dict, benchmark_dict, type, contextlengthbenchmark, contextlengthsteps)
+        return _run_openai_benchmark(models_dict, benchmark_dict, type, contextlengthbenchmark, contextlengthsteps, apiprimecount)
 
     return _run_ollama_benchmark(models_dict, benchmark_dict, type, ollamabin, contextlengthbenchmark, contextlengthsteps)
 
@@ -438,5 +468,5 @@ def run_benchmark(models_file_path, benchmark_file_path, type, ollamabin: str = 
 if __name__ == "__main__":
     args = parser.parse_args()
     if (args.models is not None) and (args.benchmark is not None) and (args.type is not None):
-        run_benchmark(args.models, args.benchmark, args.type, args.ollamabin, False, args.contextlengthbenchmark, args.contextlengthsteps)
+        run_benchmark(args.models, args.benchmark, args.type, args.ollamabin, False, args.contextlengthbenchmark, args.contextlengthsteps, args.apiprimecount)
         print('-' * 40)
